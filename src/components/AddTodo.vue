@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import uuid from 'uuid';
 export default {
     name: "AddTodo",
     data(){
@@ -19,16 +18,14 @@ export default {
     methods:{
         addTodo(e){
             e.preventDefault();
-           var title = document.getElementById('title'); 
            if(title.value != ''){
-                title.value = null;
                 const newTodo = {
-                id: uuid.v4(),
                 title: this.title,
                 completed: false
             }
 
             this.$emit('add-todo',newTodo);
+            this.title  = '';
            }
             
         }

@@ -10,6 +10,7 @@
 import Header from './components/layout/Header.vue'; // cabeçalho componente
 import Todos from './components/Todos.vue'; // todos componente que possui o TodoItem dentro dele
 import AddTodo from './components/AddTodo.vue';// Componente AddTodo que tem o form e botão
+import axios from 'axios';
 
 export default {
   name: 'app',
@@ -20,32 +21,34 @@ export default {
   },
   data() {
     return {
-     todos: [ //array de objetos com os todos exibidos na tela.
-       {
-         id: 1,
-         title: 'Todo One',
-         completed: true
-       },
-         {
-         id: 2,
-         title: 'Todo Two',
-         completed: false
-         },
-      {
-         id: 3,
-         title: 'Todo Three',
-         completed: true
-      }
-     ]
+     todos: [] //array de objetos com os todos exibidos na tela.]
     }
   },
   methods:{
     deleteTodo(id){
-      this.todos = this.todos.filter(todo => todo.id !== id);
+
+      axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`). // delete request
+      then(res => this.todos = this.todos.filter(todo => todo.id !== id)) //atualização do array
+      .catch(err => console.log(err)); // tratamento da promise
+    
     },
     addTodo(newTodo){
-      this.todos  = [...this.todos, newTodo];
+
+      const {title, completed}  = newTodo;
+      axios.post('https://jsonplaceholder.typicode.com/todos',{ //post request
+        title,
+        completed
+      }).
+      then(res => this.todos  = [...this.todos, res.data]) // atualizando com o retorno do post
+      .catch(err => console.log(err));// tratamento da promise
+      
     }
+  },
+  created(){
+
+    axios.get('https://jsonplaceholder.typicode.com/todos?_limit=5') //get request
+    .then(res => this.todos = res.data) //atualiza o array com os TODOS da API
+    .catch(err => console.log(err)); // tratamento da promise
   }
 }
 </script>
